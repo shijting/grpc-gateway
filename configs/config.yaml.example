@@ -1,0 +1,19 @@
+name: "web"
+version: "v0.0.1"
+database:
+  addr: "xxx.xxx.xxx.xxx:5432"
+  user: "USER"
+  password: "PASSWORD"
+  db: "DBNAME"
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 20
+logger:
+  logger_file: "log.log"
+grpc_server:
+  port: 8000
+grpc_gw_server:
+  port: 8001
