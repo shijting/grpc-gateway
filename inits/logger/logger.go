@@ -12,7 +12,7 @@ func Init() error  {
 	loggerPath := config.Conf.LoggerConfig.LoggerFile
 	log.Println("logger file path:", loggerPath)
 	logger = logrus.New()
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	//logger.SetFormatter(&logrus.JSONFormatter{})
 	logFile,err := os.OpenFile(loggerPath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err !=nil {
 		return err

@@ -51,13 +51,6 @@ func (m *UserRegisterRequest) Validate() error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetPassword()); l < 6 || l > 30 {
-		return UserRegisterRequestValidationError{
-			field:  "Password",
-			reason: "value length must be between 6 and 30 runes, inclusive",
-		}
-	}
-
 	if utf8.RuneCountInString(m.GetCode()) != 6 {
 		return UserRegisterRequestValidationError{
 			field:  "Code",
@@ -142,11 +135,12 @@ func (m *UserLoginRequest) Validate() error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetPassword()); l < 6 || l > 30 {
+	if utf8.RuneCountInString(m.GetCode()) != 6 {
 		return UserLoginRequestValidationError{
-			field:  "Password",
-			reason: "value length must be between 6 and 30 runes, inclusive",
+			field:  "Code",
+			reason: "value length must be 6 runes",
 		}
+
 	}
 
 	return nil
@@ -207,6 +201,145 @@ var _ interface {
 } = UserLoginRequestValidationError{}
 
 var _UserLoginRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+
+// Validate checks the field values on GetCodeRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *GetCodeRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if !_GetCodeRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
+		return GetCodeRequestValidationError{
+			field:  "PhoneNumber",
+			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
+		}
+	}
+
+	return nil
+}
+
+// GetCodeRequestValidationError is the validation error returned by
+// GetCodeRequest.Validate if the designated constraints aren't met.
+type GetCodeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCodeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCodeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCodeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCodeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCodeRequestValidationError) ErrorName() string { return "GetCodeRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetCodeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCodeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCodeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCodeRequestValidationError{}
+
+var _GetCodeRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+
+// Validate checks the field values on GetCodeResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *GetCodeResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// GetCodeResponseValidationError is the validation error returned by
+// GetCodeResponse.Validate if the designated constraints aren't met.
+type GetCodeResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCodeResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCodeResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCodeResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCodeResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCodeResponseValidationError) ErrorName() string { return "GetCodeResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetCodeResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCodeResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCodeResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCodeResponseValidationError{}
 
 // Validate checks the field values on UserResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, an error

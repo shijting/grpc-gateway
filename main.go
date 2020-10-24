@@ -5,6 +5,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/showiot/camera/gateway"
 	"github.com/showiot/camera/inits/config"
+	"github.com/showiot/camera/inits/logger"
 	"github.com/showiot/camera/pkg/v1/users"
 	"github.com/showiot/camera/proto/users_pb"
 	"github.com/showiot/camera/utils"
@@ -18,6 +19,9 @@ import (
 const configPath = "configs/config.yaml"
 func main() {
 	if err :=config.Init(configPath);err !=nil {
+		log.Fatal(err)
+	}
+	if err:= logger.Init();err !=nil {
 		log.Fatal(err)
 	}
 	exitChan := make(chan error)

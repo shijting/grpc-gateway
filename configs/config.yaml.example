@@ -17,3 +17,13 @@ grpc_server:
   port: 8000
 grpc_gw_server:
   port: 8001
+# 阿里云短信验证码
+aliyun_sms:
+  access_key_id: ""
+  access_secret: ""
+  # 签名
+  sign_name: ""
+  # 模板
+  template_code: ""
+  scheme: "http"
+  region_id: "cn-hangzhou"

@@ -7,6 +7,7 @@ import (
 )
 
 var Conf = new(AppConfig)
+
 type AppConfig struct {
 	Name                string `mapstructure:"name"`
 	Version             string `mapstructure:"version"`
@@ -15,6 +16,15 @@ type AppConfig struct {
 	*LoggerConfig       `mapstructure:"logger"`
 	*GrpcServerConfig   `mapstructure:"grpc_server"`
 	*GrpcGwServerConfig `mapstructure:"grpc_gw_server"`
+	*AliyunSmsConfig    `mapstructure:"aliyun_sms"`
+}
+type AliyunSmsConfig struct {
+	AccessKeyId  string `mapstructure:"access_key_id"`
+	AccessSecret string `mapstructure:"access_secret"`
+	SignName     string `mapstructure:"sign_name"`
+	TemplateCode string `mapstructure:"template_code"`
+	Scheme       string `mapstructure:"scheme"`
+	RegionId string `mapstructure:"region_id"`
 }
 type DatabaseConfig struct {
 	Addr     string `mapstructure:"addr"`
@@ -23,20 +33,20 @@ type DatabaseConfig struct {
 	DB       string `mapstructure:"db"`
 }
 type RedisConfig struct {
-	Host         string `mapstructure:"host"`
-	Password     string `mapstructure:"password"`
-	Port         int    `mapstructure:"port"`
-	DB           int    `mapstructure:"db"`
-	PoolSize     int    `mapstructure:"pool_size"`
+	Host     string `mapstructure:"host"`
+	Password string `mapstructure:"password"`
+	Port     int    `mapstructure:"port"`
+	DB       int    `mapstructure:"db"`
+	PoolSize int    `mapstructure:"pool_size"`
 }
 type LoggerConfig struct {
-	LoggerFile         string `mapstructure:"logger_file"`
+	LoggerFile string `mapstructure:"logger_file"`
 }
 type GrpcServerConfig struct {
-	Port         int `mapstructure:"port"`
+	Port int `mapstructure:"port"`
 }
 type GrpcGwServerConfig struct {
-	Port         int `mapstructure:"port"`
+	Port int `mapstructure:"port"`
 }
 
 func Init(filePath string) (err error) {
