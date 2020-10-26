@@ -42,6 +42,9 @@ func Reload() (err error) {
 func GetDB() *pg.DB {
 	return db
 }
-func Close()  {
-	db.Close()
+func Close() (err error)  {
+	if db !=nil {
+		err = db.Close()
+	}
+	return
 }

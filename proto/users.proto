@@ -3,7 +3,8 @@ package users_pb;
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate.proto";
-option go_package =".;users_pb";
+import "google/protobuf/empty.proto";
+option go_package = ".;users_pb";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
@@ -11,13 +12,13 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   };
   external_docs: {
     url: "http://localhost:8001/";
-    description: "xxxx Open API";
+    description: "Camera System Open API";
   }
   schemes: HTTP;
 };
 service UserService {
   // 注册
-  rpc Register(UserRegisterRequest)returns(UserResponse){
+  rpc Register(RegisterRequest)returns(UserResponse){
     option (google.api.http) = {
       post: "/api/v1/register",
       body: "*"
@@ -29,7 +30,7 @@ service UserService {
     };
   };
   // 登录
-  rpc Login(UserLoginRequest)returns(UserResponse){
+  rpc Login(LoginRequest)returns(LoginResponse){
     option (google.api.http) = {
       post: "/api/v1/login",
       body: "*"
@@ -41,9 +42,9 @@ service UserService {
     };
   };
   // 获取验证码
-  rpc GetCode(GetCodeRequest)returns(GetCodeResponse){
+  rpc GetCode(GetCodeRequest)returns(google.protobuf.Empty){
     option (google.api.http) = {
-      get: "/api/v1/code/{phoneNumber}",
+      get: "/api/v1/code/{codeType}/{phoneNumber}",
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       summary: "获取验证码",
@@ -52,33 +53,45 @@ service UserService {
     };
   };
 }
-message UserRegisterRequest {
+
+message RegisterRequest {
   // 手机号码
   string phoneNumber = 1 [(validate.rules).string = {pattern: "^1[3|5|7|8][0-9]{9}$"}];
   // 验证码
   string code = 2 [(validate.rules).string.len = 6];
 }
-message UserLoginRequest {
+message LoginRequest {
   string phoneNumber = 1 [(validate.rules).string = {pattern: "^1[3|5|7|8][0-9]{9}$"}];
   string code = 2 [(validate.rules).string.len = 6];
 }
+message LoginResponse {
+  string token = 1;
+}
 // 获取验证码
 message GetCodeRequest {
-  // 手机号码
   string phoneNumber = 1 [(validate.rules).string = {pattern: "^1[3|5|7|8][0-9]{9}$"}];
+  CodeType codeType = 2;
 }
-message GetCodeResponse {
+// 验证码类型
+enum CodeType {
+  CODE_NONE = 0;
+  CODE_REGISTER = 1;
+  CODE_LOGIN = 2;
 }
 message UserResponse {
-  int32 code = 1;
-  string message = 2;
-  User details = 3;
+  int32 id = 1;
+  string phoneNumber = 2;
+  string lastLoginDate = 3;
+  string lastLoginIp = 4;
+  int32 status = 5;
+  uint32 created_at = 6;
+  uint32 updated_ta = 7;
 }
 message User {
   int32 id = 1;
   string phoneNumber = 2;
-  string lastLoginDate =3;
-  string lastLoginIp =4;
+  string lastLoginDate = 3;
+  string lastLoginIp = 4;
   int32 status = 5;
   uint32 created_at = 6;
   uint32 updated_ta = 7;

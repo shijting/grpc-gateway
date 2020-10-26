@@ -6,6 +6,8 @@ import (
 	"github.com/showiot/camera/gateway"
 	"github.com/showiot/camera/inits/config"
 	"github.com/showiot/camera/inits/logger"
+	"github.com/showiot/camera/inits/psql"
+	"github.com/showiot/camera/inits/redis"
 	"github.com/showiot/camera/pkg/v1/users"
 	"github.com/showiot/camera/proto/users_pb"
 	"github.com/showiot/camera/utils"
@@ -16,12 +18,20 @@ import (
 	"os/signal"
 	"syscall"
 )
+
 const configPath = "configs/config.yaml"
+
 func main() {
-	if err :=config.Init(configPath);err !=nil {
+	if err := config.Init(configPath); err != nil {
 		log.Fatal(err)
 	}
-	if err:= logger.Init();err !=nil {
+	if err := logger.Init(); err != nil {
+		log.Fatal(err)
+	}
+	if err := psql.Init(); err != nil {
+		log.Fatal(err)
+	}
+	if err := redis.Init(); err != nil {
 		log.Fatal(err)
 	}
 	exitChan := make(chan error)
@@ -34,6 +44,11 @@ func main() {
 	go gateway.Run(exitChan)
 	err := <-exitChan
 	log.Println(err)
+	exit()
+}
+func exit() {
+	_ = psql.Close()
+	_ = redis.Close()
 }
 func runGrpcServer(exitChan chan error) {
 	port := config.Conf.GrpcServerConfig.Port

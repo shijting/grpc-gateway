@@ -14,7 +14,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/code/{phoneNumber}": {
+    "/api/v1/code/{codeType}/{phoneNumber}": {
       "get": {
         "summary": "获取验证码",
         "description": "根据手机号码获取验证码",
@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/users_pbGetCodeResponse"
+              "properties": {}
             }
           },
           "default": {
@@ -35,8 +35,18 @@
         },
         "parameters": [
           {
+            "name": "codeType",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "CODE_NONE",
+              "CODE_REGISTER",
+              "CODE_LOGIN"
+            ]
+          },
+          {
             "name": "phoneNumber",
-            "description": "手机号码",
             "in": "path",
             "required": true,
             "type": "string"
@@ -56,7 +66,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/users_pbUserResponse"
+              "$ref": "#/definitions/users_pbLoginResponse"
             }
           },
           "default": {
@@ -72,7 +82,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/users_pbUserLoginRequest"
+              "$ref": "#/definitions/users_pbLoginRequest"
             }
           }
         ],
@@ -106,7 +116,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/users_pbUserRegisterRequest"
+              "$ref": "#/definitions/users_pbRegisterRequest"
             }
           }
         ],
@@ -147,10 +157,49 @@
         }
       }
     },
-    "users_pbGetCodeResponse": {
-      "type": "object"
+    "users_pbCodeType": {
+      "type": "string",
+      "enum": [
+        "CODE_NONE",
+        "CODE_REGISTER",
+        "CODE_LOGIN"
+      ],
+      "default": "CODE_NONE",
+      "title": "验证码类型"
     },
-    "users_pbUser": {
+    "users_pbLoginRequest": {
+      "type": "object",
+      "properties": {
+        "phoneNumber": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "users_pbLoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "users_pbRegisterRequest": {
+      "type": "object",
+      "properties": {
+        "phoneNumber": {
+          "type": "string",
+          "title": "手机号码"
+        },
+        "code": {
+          "type": "string",
+          "title": "验证码"
+        }
+      }
+    },
+    "users_pbUserResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -177,45 +226,6 @@
         "updatedTa": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "users_pbUserLoginRequest": {
-      "type": "object",
-      "properties": {
-        "phoneNumber": {
-          "type": "string"
-        },
-        "code": {
-          "type": "string"
-        }
-      }
-    },
-    "users_pbUserRegisterRequest": {
-      "type": "object",
-      "properties": {
-        "phoneNumber": {
-          "type": "string",
-          "title": "手机号码"
-        },
-        "code": {
-          "type": "string",
-          "title": "验证码"
-        }
-      }
-    },
-    "users_pbUserResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "$ref": "#/definitions/users_pbUser"
         }
       }
     }

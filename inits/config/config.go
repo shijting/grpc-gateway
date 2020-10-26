@@ -17,6 +17,13 @@ type AppConfig struct {
 	*GrpcServerConfig   `mapstructure:"grpc_server"`
 	*GrpcGwServerConfig `mapstructure:"grpc_gw_server"`
 	*AliyunSmsConfig    `mapstructure:"aliyun_sms"`
+	*CodeConfig         `mapstructure:"code"`
+}
+type CodeConfig struct {
+	RegisterTTL      int `mapstructure:"register_ttl"`
+	RegisterRetryTtl int `mapstructure:"register_retry_ttl"`
+	LoginTTL      int `mapstructure:"login_ttl"`
+	LoginRetryTtl int `mapstructure:"login_retry_ttl"`
 }
 type AliyunSmsConfig struct {
 	AccessKeyId  string `mapstructure:"access_key_id"`
@@ -24,7 +31,7 @@ type AliyunSmsConfig struct {
 	SignName     string `mapstructure:"sign_name"`
 	TemplateCode string `mapstructure:"template_code"`
 	Scheme       string `mapstructure:"scheme"`
-	RegionId string `mapstructure:"region_id"`
+	RegionId     string `mapstructure:"region_id"`
 }
 type DatabaseConfig struct {
 	Addr     string `mapstructure:"addr"`

@@ -8,6 +8,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.4.1
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/go-pg/pg/v10 v10.5.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1

@@ -36,107 +36,23 @@ var (
 // define the regex for a UUID once up-front
 var _users_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
-// Validate checks the field values on UserRegisterRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
-func (m *UserRegisterRequest) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	if !_UserRegisterRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
-		return UserRegisterRequestValidationError{
-			field:  "PhoneNumber",
-			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
-		}
-	}
-
-	if utf8.RuneCountInString(m.GetCode()) != 6 {
-		return UserRegisterRequestValidationError{
-			field:  "Code",
-			reason: "value length must be 6 runes",
-		}
-
-	}
-
-	return nil
-}
-
-// UserRegisterRequestValidationError is the validation error returned by
-// UserRegisterRequest.Validate if the designated constraints aren't met.
-type UserRegisterRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UserRegisterRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UserRegisterRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UserRegisterRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UserRegisterRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UserRegisterRequestValidationError) ErrorName() string {
-	return "UserRegisterRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UserRegisterRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUserRegisterRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UserRegisterRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UserRegisterRequestValidationError{}
-
-var _UserRegisterRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
-
-// Validate checks the field values on UserLoginRequest with the rules defined
+// Validate checks the field values on RegisterRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, an
 // error is returned.
-func (m *UserLoginRequest) Validate() error {
+func (m *RegisterRequest) Validate() error {
 	if m == nil {
 		return nil
 	}
 
-	if !_UserLoginRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
-		return UserLoginRequestValidationError{
+	if !_RegisterRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
+		return RegisterRequestValidationError{
 			field:  "PhoneNumber",
 			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
 		}
 	}
 
 	if utf8.RuneCountInString(m.GetCode()) != 6 {
-		return UserLoginRequestValidationError{
+		return RegisterRequestValidationError{
 			field:  "Code",
 			reason: "value length must be 6 runes",
 		}
@@ -146,9 +62,9 @@ func (m *UserLoginRequest) Validate() error {
 	return nil
 }
 
-// UserLoginRequestValidationError is the validation error returned by
-// UserLoginRequest.Validate if the designated constraints aren't met.
-type UserLoginRequestValidationError struct {
+// RegisterRequestValidationError is the validation error returned by
+// RegisterRequest.Validate if the designated constraints aren't met.
+type RegisterRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -156,22 +72,22 @@ type UserLoginRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserLoginRequestValidationError) Field() string { return e.field }
+func (e RegisterRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserLoginRequestValidationError) Reason() string { return e.reason }
+func (e RegisterRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserLoginRequestValidationError) Cause() error { return e.cause }
+func (e RegisterRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserLoginRequestValidationError) Key() bool { return e.key }
+func (e RegisterRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserLoginRequestValidationError) ErrorName() string { return "UserLoginRequestValidationError" }
+func (e RegisterRequestValidationError) ErrorName() string { return "RegisterRequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserLoginRequestValidationError) Error() string {
+func (e RegisterRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -183,14 +99,14 @@ func (e UserLoginRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserLoginRequest.%s: %s%s",
+		"invalid %sRegisterRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserLoginRequestValidationError{}
+var _ error = RegisterRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -198,9 +114,158 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserLoginRequestValidationError{}
+} = RegisterRequestValidationError{}
 
-var _UserLoginRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+var _RegisterRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+
+// Validate checks the field values on LoginRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *LoginRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if !_LoginRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
+		return LoginRequestValidationError{
+			field:  "PhoneNumber",
+			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetCode()) != 6 {
+		return LoginRequestValidationError{
+			field:  "Code",
+			reason: "value length must be 6 runes",
+		}
+
+	}
+
+	return nil
+}
+
+// LoginRequestValidationError is the validation error returned by
+// LoginRequest.Validate if the designated constraints aren't met.
+type LoginRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LoginRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LoginRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LoginRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LoginRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LoginRequestValidationError) ErrorName() string { return "LoginRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e LoginRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLoginRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LoginRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LoginRequestValidationError{}
+
+var _LoginRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+
+// Validate checks the field values on LoginResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *LoginResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Token
+
+	return nil
+}
+
+// LoginResponseValidationError is the validation error returned by
+// LoginResponse.Validate if the designated constraints aren't met.
+type LoginResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LoginResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LoginResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LoginResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LoginResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LoginResponseValidationError) ErrorName() string { return "LoginResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e LoginResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLoginResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LoginResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LoginResponseValidationError{}
 
 // Validate checks the field values on GetCodeRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, an error
@@ -216,6 +281,8 @@ func (m *GetCodeRequest) Validate() error {
 			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
 		}
 	}
+
+	// no validation rules for CodeType
 
 	return nil
 }
@@ -276,71 +343,6 @@ var _ interface {
 
 var _GetCodeRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
 
-// Validate checks the field values on GetCodeResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
-func (m *GetCodeResponse) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// GetCodeResponseValidationError is the validation error returned by
-// GetCodeResponse.Validate if the designated constraints aren't met.
-type GetCodeResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetCodeResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetCodeResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetCodeResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetCodeResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetCodeResponseValidationError) ErrorName() string { return "GetCodeResponseValidationError" }
-
-// Error satisfies the builtin error interface
-func (e GetCodeResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetCodeResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetCodeResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetCodeResponseValidationError{}
-
 // Validate checks the field values on UserResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, an error
 // is returned.
@@ -349,19 +351,19 @@ func (m *UserResponse) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Code
+	// no validation rules for Id
 
-	// no validation rules for Message
+	// no validation rules for PhoneNumber
 
-	if v, ok := interface{}(m.GetDetails()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserResponseValidationError{
-				field:  "Details",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for LastLoginDate
+
+	// no validation rules for LastLoginIp
+
+	// no validation rules for Status
+
+	// no validation rules for CreatedAt
+
+	// no validation rules for UpdatedTa
 
 	return nil
 }

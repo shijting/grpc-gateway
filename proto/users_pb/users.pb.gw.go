@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_UserService_Register_0(ctx context.Context, marshaler runtime.Marshaler, client UserServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UserRegisterRequest
+	var protoReq RegisterRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -49,7 +49,7 @@ func request_UserService_Register_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_UserService_Register_0(ctx context.Context, marshaler runtime.Marshaler, server UserServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UserRegisterRequest
+	var protoReq RegisterRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -66,7 +66,7 @@ func local_request_UserService_Register_0(ctx context.Context, marshaler runtime
 }
 
 func request_UserService_Login_0(ctx context.Context, marshaler runtime.Marshaler, client UserServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UserLoginRequest
+	var protoReq LoginRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -83,7 +83,7 @@ func request_UserService_Login_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_UserService_Login_0(ctx context.Context, marshaler runtime.Marshaler, server UserServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UserLoginRequest
+	var protoReq LoginRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -105,10 +105,23 @@ func request_UserService_GetCode_0(ctx context.Context, marshaler runtime.Marsha
 
 	var (
 		val string
+		e   int32
 		ok  bool
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["codeType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "codeType")
+	}
+
+	e, err = runtime.Enum(val, CodeType_value)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "codeType", err)
+	}
+
+	protoReq.CodeType = CodeType(e)
 
 	val, ok = pathParams["phoneNumber"]
 	if !ok {
@@ -131,10 +144,23 @@ func local_request_UserService_GetCode_0(ctx context.Context, marshaler runtime.
 
 	var (
 		val string
+		e   int32
 		ok  bool
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["codeType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "codeType")
+	}
+
+	e, err = runtime.Enum(val, CodeType_value)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "codeType", err)
+	}
+
+	protoReq.CodeType = CodeType(e)
 
 	val, ok = pathParams["phoneNumber"]
 	if !ok {
@@ -335,7 +361,7 @@ var (
 
 	pattern_UserService_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "login"}, ""))
 
-	pattern_UserService_GetCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "code", "phoneNumber"}, ""))
+	pattern_UserService_GetCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "code", "codeType", "phoneNumber"}, ""))
 )
 
 var (

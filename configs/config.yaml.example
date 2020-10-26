@@ -27,3 +27,13 @@ aliyun_sms:
   template_code: ""
   scheme: "http"
   region_id: "cn-hangzhou"
+# 验证码
+code:
+  # 注册验证码过期时间(s)
+  register_ttl: 900
+  # 再次获取注册验证码间隔时间(s)
+  register_retry_ttl: 60
+  # 登录验证码过期时间(s)
+  login_ttl: 900
+  # 再次获取获取验证码间隔时间(s)
+  login_retry_ttl: 60
