@@ -3,11 +3,14 @@ package models
 import "time"
 
 type User struct {
-	Id int32 `pg:"type:serial"`
-	PhoneNumber string `pg:"unique,notnull"`
-	Status int8 `pg:"type:smallint"`
-	LastLoginDate *time.Time
+	Id          uint32 `pg:"id,type:serial"`
+	PhoneNumber string `pg:",unique,notnull"`
+	Nickname    string `pg:"nickname"`
+	Status      int8   `pg:"type:smallint"`
+	LastLoginAt time.Time
 	LastLoginIp string
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
+	Password    string
+	CreatedAt   time.Time
+	Avatar      string
+	UpdatedAt   time.Time
 }

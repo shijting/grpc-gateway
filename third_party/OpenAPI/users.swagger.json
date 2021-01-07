@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "users.proto",
-    "version": "v1"
+    "title": "Camera System OpenAPI",
+    "version": "v0.01"
   },
   "schemes": [
     "http"
@@ -14,11 +14,11 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/code/{codeType}/{phoneNumber}": {
+    "/v1/captcha/{phoneNumber}": {
       "get": {
         "summary": "获取验证码",
         "description": "根据手机号码获取验证码",
-        "operationId": "UserService_GetCode",
+        "operationId": "UserService_GetCaptcha",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -35,17 +35,6 @@
         },
         "parameters": [
           {
-            "name": "codeType",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "enum": [
-              "CODE_NONE",
-              "CODE_REGISTER",
-              "CODE_LOGIN"
-            ]
-          },
-          {
             "name": "phoneNumber",
             "in": "path",
             "required": true,
@@ -53,11 +42,51 @@
           }
         ],
         "tags": [
-          "Users"
-        ]
+          "用户"
+        ],
+        "security": []
       }
     },
-    "/api/v1/login": {
+    "/v1/captcha/{phoneNumber}/{captcha}/verify": {
+      "get": {
+        "summary": "校验验证码",
+        "description": "校验验证码",
+        "operationId": "UserService_VerifyCaptcha",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/users_pbVerifyCaptchaResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "captcha",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "用户"
+        ],
+        "security": []
+      }
+    },
+    "/v1/login": {
       "post": {
         "summary": "用户登录",
         "description": "根据手机号码与密码进行登录",
@@ -87,20 +116,45 @@
           }
         ],
         "tags": [
-          "Users"
-        ]
+          "用户"
+        ],
+        "security": []
       }
     },
-    "/api/v1/register": {
-      "post": {
-        "summary": "用户注册",
-        "description": "注册一个新用户",
-        "operationId": "UserService_Register",
+    "/v1/user": {
+      "get": {
+        "summary": "获取用户信息",
+        "description": "获取用户信息",
+        "operationId": "UserService_ShowUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/users_pbUserResponse"
+              "$ref": "#/definitions/users_pbUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "用户"
+        ]
+      }
+    },
+    "/v1/user/avatar": {
+      "post": {
+        "summary": "更新头像",
+        "description": "更新头像",
+        "operationId": "UserService_Upload",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/users_pbUploadAvatarResponse"
             }
           },
           "default": {
@@ -116,12 +170,46 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/users_pbRegisterRequest"
+              "$ref": "#/definitions/users_pbUploadAvatarRequest"
             }
           }
         ],
         "tags": [
-          "Users"
+          "用户"
+        ]
+      }
+    },
+    "/v1/user/nickname": {
+      "put": {
+        "summary": "更新用户昵称",
+        "description": "更新用户昵称",
+        "operationId": "UserService_UpdateUserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/users_pbUpdateUserInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/users_pbUpdateUserInfoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "用户"
         ]
       }
     }
@@ -157,23 +245,13 @@
         }
       }
     },
-    "users_pbCodeType": {
-      "type": "string",
-      "enum": [
-        "CODE_NONE",
-        "CODE_REGISTER",
-        "CODE_LOGIN"
-      ],
-      "default": "CODE_NONE",
-      "title": "验证码类型"
-    },
     "users_pbLoginRequest": {
       "type": "object",
       "properties": {
         "phoneNumber": {
           "type": "string"
         },
-        "code": {
+        "captcha": {
           "type": "string"
         }
       }
@@ -186,31 +264,48 @@
         }
       }
     },
-    "users_pbRegisterRequest": {
+    "users_pbUpdateUserInfoRequest": {
       "type": "object",
       "properties": {
-        "phoneNumber": {
-          "type": "string",
-          "title": "手机号码"
-        },
-        "code": {
-          "type": "string",
-          "title": "验证码"
+        "nickname": {
+          "type": "string"
+        }
+      },
+      "title": "更新用户信息"
+    },
+    "users_pbUpdateUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "nickname": {
+          "type": "string"
         }
       }
     },
-    "users_pbUserResponse": {
+    "users_pbUploadAvatarRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
+        "avatar": {
+          "type": "string"
+        }
+      }
+    },
+    "users_pbUploadAvatarResponse": {
+      "type": "object",
+      "properties": {
+        "imageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "users_pbUser": {
+      "type": "object",
+      "properties": {
         "phoneNumber": {
           "type": "string"
         },
-        "lastLoginDate": {
-          "type": "string"
+        "lastLoginAt": {
+          "type": "string",
+          "format": "int64"
         },
         "lastLoginIp": {
           "type": "string"
@@ -220,16 +315,43 @@
           "format": "int32"
         },
         "createdAt": {
-          "type": "integer",
+          "type": "string",
           "format": "int64"
         },
-        "updatedTa": {
-          "type": "integer",
+        "updatedAt": {
+          "type": "string",
           "format": "int64"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        }
+      }
+    },
+    "users_pbVerifyCaptchaResponse": {
+      "type": "object",
+      "properties": {
+        "verified": {
+          "type": "boolean"
         }
       }
     }
   },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "X-Camera-Token",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
   "externalDocs": {
     "description": "Camera System Open API",
     "url": "http://localhost:8001/"

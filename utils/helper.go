@@ -1,24 +1,79 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/showiot/camera/gateway"
 	"github.com/showiot/camera/inits/config"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/peer"
 	"math/rand"
+	"net"
+	"strings"
 	"time"
 )
 
-// 生成hash密码
+// 手机号码脱敏
+func MaskedMobile(mobile string) string {
+	return mobile[:3] + "***" + mobile[8:]
+}
+
+// 从token中解析出user信息
+func GetUserInfoFromToken(ctx context.Context) (userInfo *UserTokenValue, err error) {
+	token, err := GetCtxInfo(ctx, gateway.CtxToken)
+	if err != nil || token == "" {
+		return nil, fmt.Errorf("can not get token from context")
+	}
+	ut := New(config.Conf.TokenConfig.Prefix, 0)
+	userToken, err := ut.Get(token)
+	if err !=nil {
+		return nil, err
+	}
+	return userToken, nil
+}
+
+func GetCtxInfo(ctx context.Context, key string) (val string, err error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		//logger.GetLogger().Warningfln("md not found")
+		return
+	}
+	result := md.Get(key)
+	if len(result) == 0 {
+		return "", fmt.Errorf("cannot get %s from the context", key)
+	}
+	return result[0], nil
+}
+
+// GetClientIP 获取客户端ip
+func GetClientIP(ctx context.Context) (string, error) {
+	pr, ok := peer.FromContext(ctx)
+	if !ok {
+		return "", fmt.Errorf("[getClinetIP] invoke FromContext() failed")
+	}
+	if pr.Addr == net.Addr(nil) {
+		return "", fmt.Errorf("[getClientIP] peer.Addr is nil")
+	}
+	addSlice := strings.Split(pr.Addr.String(), ":")
+	if addSlice[0] == "[" {
+		//本机地址
+		return "127.0.0.1", nil
+	}
+	return addSlice[0], nil
+}
+
+// HashPassword 生成hash密码
 func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
 }
 
-// 校验密码
+// CheckPasswordHash 校验密码
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
@@ -26,18 +81,22 @@ func CheckPasswordHash(password, hash string) bool {
 
 var defaultSeed = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 var numericSend = []rune("0123456789")
+
 /**
- * 生成随机字符串
- * n:长度
- * randomType：字符串类型（1：字符，2数字）
- */
+# 生成随机字符串
+# n:长度
+# randomType：字符串类型（1：字符，2数字）
+*/
 func GenRandomString(n, randomType int) string {
+	rand.Seed(time.Now().UnixNano())
 	var seed []rune
 	switch randomType {
 	case 1:
 		seed = defaultSeed
 	case 2:
 		seed = numericSend
+	case 3:
+		seed = []rune("123456789")
 	default:
 		seed = defaultSeed
 	}
@@ -77,13 +136,11 @@ func SendSms(phoneNumber, code string) (err error) {
 	request.TemplateParam = string(byteCode)
 	var response *dysmsapi.SendSmsResponse
 	response, err = client.SendSms(request)
-	if response.Code != "OK" {
-		err = fmt.Errorf("send sms failed")
+	if  response.Code != "OK" {
+		err = fmt.Errorf("send sms failed, error[message:%v, code:%v, requestId:%v]", response.Message, response.Code, response.RequestId)
 	}
 	return
 }
-
-// 校验验证码
 
 const (
 	// access token过期时间
@@ -96,11 +153,12 @@ const (
 var Secret = []byte("亚索主E，QEQ")
 
 type Claims struct {
-	UserId int32 `json:"user_id"`
+	UserId uint32 `json:"user_id"`
 	jwt.StandardClaims
 }
+
 // 生成jwt token
-func GenToken(userId int32) (aToken string, err error) {
+func GenToken(userId uint32) (token string, err error) {
 	c := &Claims{
 		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
@@ -108,7 +166,7 @@ func GenToken(userId int32) (aToken string, err error) {
 		},
 	}
 	// 生成access token
-	aToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(Secret)
+	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(Secret)
 	if err != nil {
 		return
 	}

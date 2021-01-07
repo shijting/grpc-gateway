@@ -1,0 +1,165 @@
+syntax = "proto3";
+package camera_messages_pb;
+option go_package = ".;camera_messages_pb";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate.proto";
+import "google/protobuf/empty.proto";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Camera System OpenAPI";
+    version: "v0.01";
+  };
+  external_docs: {
+    url: "http://localhost:8001/";
+    description: "Camera System Open API";
+  }
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "X-Camera-Token"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+};
+service CameraMessageService {
+  rpc AddCameraMessage(AddCameraMessageRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/camera_messages",
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "新增设备消息",
+      description: "新增设备消息",
+      tags: "设备消息",
+      security: {}
+    };
+  };
+
+  // 获取用户所有设备消息
+  rpc ListCameraMessage(google.protobuf.Empty)returns(ListCameraMessagesResponse){
+    option (google.api.http) = {
+      get: "/v1/cameras_messages/list",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "获取用户所有设备消息",
+      description: "获取用户所有设备消息",
+      tags: "设备消息"
+    };
+  };
+
+  // 获取单个设备消息
+  rpc ShowCameraMessage(CameraMessagesRequest)returns(CameraMessagesResponse){
+    option (google.api.http) = {
+      get: "/v1/camera_messages/{camera_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "获取设备消息",
+      description: "获取设备消息",
+      tags: "设备消息"
+    };
+  };
+
+  // 删除设备所有消息
+  rpc DeleteCameraMessages(DeleteCameraMessagesRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v1/camera_messages/{camera_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "删除设备所有消息",
+      description: "删除设备所有消息",
+      tags: "设备消息"
+    };
+  };
+
+  // 删除一条消息
+  rpc DeleteCameraMessage(DeleteCameraMessageRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v1/camera_message/{message_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "删除一条消息",
+      description: "删除一条消息",
+      tags: "设备消息"
+    };
+  };
+
+  // 设备消息设置为已读
+  rpc ReadUserCameraMessage(ReadUserCameraMessageRequest)returns(google.protobuf.Empty){
+    option (google.api.http) = {
+      put: "/v1/user_camera_messages/{camera_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "设备消息设置为已读",
+      description: "设备消息设置为已读",
+      tags: "设备消息"
+    };
+  };
+}
+message AddCameraMessageRequest {
+  uint32 camera_id = 1 [(validate.rules).uint32.gt = 0];
+  string video_url = 3;
+  string image_url = 4;
+  string title = 5;
+}
+
+message CameraMessage {
+  uint32 id = 1;
+  // 设备id
+  uint32 camera_id = 2;
+  // 设备名称
+  string camera_name = 3;
+  string video_url = 4;
+  string image_url = 5;
+  // 标题
+  string title = 6;
+  // 是否已读
+  bool is_read = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
+
+}
+
+message CameraMessagesRequest {
+  uint32 camera_id = 1 [(validate.rules).uint32.gt = 0];
+  int64 offset = 2 [(validate.rules).int64.gte = 0];
+  int64 limit = 3 [(validate.rules).int64 = {gte:10,lte:500}];
+}
+
+message CameraMessagesResponse {
+  repeated  CameraMessage cameraMessages = 1;
+}
+
+message ListCameraMessagesRequest {
+  uint32 user_id = 1 [(validate.rules).uint32.gt = 0];
+}
+
+message ListCameraMessagesResponse {
+  repeated  CameraMessage cameraMessages = 1;
+}
+
+message DeleteCameraMessagesRequest {
+  uint32 camera_id = 1 [(validate.rules).uint32.gt = 0];
+}
+
+message DeleteCameraMessageRequest {
+  // camera_message_id
+  uint32 message_id = 1 [(validate.rules).uint32.gt = 0];
+}
+
+
+message ReadUserCameraMessageRequest{
+  uint32 camera_id = 1 [(validate.rules).uint32.gt = 0];
+}

@@ -1,0 +1,351 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Camera System OpenAPI",
+    "version": "v0.01"
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/camera_message/{messageId}": {
+      "delete": {
+        "summary": "删除一条消息",
+        "description": "删除一条消息",
+        "operationId": "CameraMessageService_DeleteCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "messageId",
+            "description": "camera_message_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "设备消息"
+        ]
+      }
+    },
+    "/v1/camera_messages": {
+      "post": {
+        "summary": "新增设备消息",
+        "description": "新增设备消息",
+        "operationId": "CameraMessageService_AddCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/camera_messages_pbAddCameraMessageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "设备消息"
+        ],
+        "security": []
+      }
+    },
+    "/v1/camera_messages/{cameraId}": {
+      "get": {
+        "summary": "获取设备消息",
+        "description": "获取设备消息",
+        "operationId": "CameraMessageService_ShowCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/camera_messages_pbCameraMessagesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cameraId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "设备消息"
+        ]
+      },
+      "delete": {
+        "summary": "删除设备所有消息",
+        "description": "删除设备所有消息",
+        "operationId": "CameraMessageService_DeleteCameraMessages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cameraId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "设备消息"
+        ]
+      }
+    },
+    "/v1/cameras_messages/list": {
+      "get": {
+        "summary": "获取用户所有设备消息",
+        "description": "获取用户所有设备消息",
+        "operationId": "CameraMessageService_ListCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/camera_messages_pbListCameraMessagesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "设备消息"
+        ]
+      }
+    },
+    "/v1/user_camera_messages/{cameraId}": {
+      "put": {
+        "summary": "设备消息设置为已读",
+        "description": "设备消息设置为已读",
+        "operationId": "CameraMessageService_ReadUserCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cameraId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "设备消息"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "camera_messages_pbAddCameraMessageRequest": {
+      "type": "object",
+      "properties": {
+        "cameraId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "videoUrl": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "camera_messages_pbCameraMessage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cameraId": {
+          "type": "integer",
+          "format": "int64",
+          "title": "设备id"
+        },
+        "cameraName": {
+          "type": "string",
+          "title": "设备名称"
+        },
+        "videoUrl": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "title": "标题"
+        },
+        "isRead": {
+          "type": "boolean",
+          "title": "是否已读"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "camera_messages_pbCameraMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "cameraMessages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/camera_messages_pbCameraMessage"
+          }
+        }
+      }
+    },
+    "camera_messages_pbListCameraMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "cameraMessages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/camera_messages_pbCameraMessage"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "description": "Authentication token, prefixed by Bearer: Bearer \u003ctoken\u003e",
+      "name": "X-Camera-Token",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "externalDocs": {
+    "description": "Camera System Open API",
+    "url": "http://localhost:8001/"
+  }
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+
+package proto;
+option go_package = ".;proto";
+
+// 错误码
+message Error {
+  enum Code {
+    ERR_OK = 0;
+    ERR_NOT_FOUND = 1;
+    ERR_METHOD_NOT_ALLOWED = 2;
+    ERR_INTERNAL_SERVER = 3;
+    ERR_UNAUTHORIZED = 4;
+    ERR_FORBIDDEN = 5;
+    ERR_ILLEGAL_ACCESS = 6;
+    ERR_DATABASE = 7;
+    ERR_INVALID_ARGS = 8;
+    ERR_INVALID_METHOD = 9;
+    // 操作失败
+    ERR_OPERATION_FAILED = 10;
+    // 用户不存在
+    ERR_USER_NOT_EXIST = 11;
+    // 验证码错误
+    ERR_INVALID_CAPTCHA = 12;
+    // 设备不存在
+    ERR_CAMERA_NOT_FOUND = 13;
+    // 设备没有被绑定
+    ERR_CAMERA_NOT_BEING_BINDED = 14;
+    // 生成token失败
+    ERR_GENERATE_TOKEN_FAILED = 15;
+    // 无效的token
+    ERR_INVALID_TOKEN = 16;
+    // 被分享用户不存在
+    ERR_SHARED_USER_NOT_EXIST = 17;
+    // 重复分享
+    ERR_SHARE_REPEATED = 18;
+    // 上传文件超出大小限制
+    ERR_UPLOAD_SIZE_LIMIT = 19;
+  }
+
+  Code code = 1;
+  string message = 2;
+}

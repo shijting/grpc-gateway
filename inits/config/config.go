@@ -18,12 +18,29 @@ type AppConfig struct {
 	*GrpcGwServerConfig `mapstructure:"grpc_gw_server"`
 	*AliyunSmsConfig    `mapstructure:"aliyun_sms"`
 	*CodeConfig         `mapstructure:"code"`
+	*TokenConfig        `mapstructure:"token"`
+	*UploadConfig       `mapstructure:"upload"`
+	*OssConfig          `mapstructure:"oss"`
+}
+type OssConfig struct {
+	Endpoint        string `mapstructure:"endpoint"`
+	AccessKeyId     string `mapstructure:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret"`
+	BucketName      string `mapstructure:"bucket_name"`
+}
+type UploadConfig struct {
+	Size      int  `mapstructure:"size"`
+	EnableOss bool `mapstructure:"enable_oss"`
+}
+type TokenConfig struct {
+	Expire int    `mapstructure:"expire"`
+	Prefix string `mapstructure:"prefix"`
 }
 type CodeConfig struct {
 	RegisterTTL      int `mapstructure:"register_ttl"`
 	RegisterRetryTtl int `mapstructure:"register_retry_ttl"`
-	LoginTTL      int `mapstructure:"login_ttl"`
-	LoginRetryTtl int `mapstructure:"login_retry_ttl"`
+	LoginTTL         int `mapstructure:"login_ttl"`
+	LoginRetryTtl    int `mapstructure:"login_retry_ttl"`
 }
 type AliyunSmsConfig struct {
 	AccessKeyId  string `mapstructure:"access_key_id"`
@@ -47,7 +64,8 @@ type RedisConfig struct {
 	PoolSize int    `mapstructure:"pool_size"`
 }
 type LoggerConfig struct {
-	LoggerFile string `mapstructure:"logger_file"`
+	MaxAge       int `mapstructure:"max_age"`
+	RotationTime int `mapstructure:"rotation_time"`
 }
 type GrpcServerConfig struct {
 	Port int `mapstructure:"port"`

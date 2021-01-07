@@ -7,6 +7,7 @@ import (
 	"github.com/showiot/camera/inits/config"
 	"log"
 	"sync"
+	"time"
 )
 var db *pg.DB
 func Init() error  {
@@ -16,6 +17,7 @@ func Init() error  {
 		Password: config.Conf.DatabaseConfig.Passwrod,
 		Database: config.Conf.DatabaseConfig.DB,
 	})
+	//db.AddQueryHook(dbLogger{})
 	ctx := context.Background()
 
 	if err := db.Ping(ctx); err != nil {
@@ -47,4 +49,25 @@ func Close() (err error)  {
 		err = db.Close()
 	}
 	return
+}
+type dbLogger struct{}
+func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+	c2 := context.WithValue(c, "start", time.Now())
+	return c2, nil
+}
+
+func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
+	start := c.Value("start").(time.Time)
+	sql, err := q.FormattedQuery()
+	spent := time.Since(start)
+	//if err == nil {
+	//	if viper.GetBool("db.sql.print") && len(sql) < viper.GetInt("db.sql.length") {
+	//		println("spent: ", int(spent/time.Millisecond), " sql: ", string(sql))
+	//	}
+	//}
+	println("spent: ", int(spent/time.Millisecond), " sql: ", string(sql))
+	//if spent > viper.GetDuration("db.sql.slow_time") && len(sql) < viper.GetInt("db.sql.length") {
+	//	println("spent: ", int(spent/time.Millisecond), " slow query: ", string(sql))
+	//}
+	return err
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/showiot/camera/gateway"
@@ -8,7 +9,13 @@ import (
 	"github.com/showiot/camera/inits/logger"
 	"github.com/showiot/camera/inits/psql"
 	"github.com/showiot/camera/inits/redis"
+	"github.com/showiot/camera/pkg/v1/camera_messages"
+	"github.com/showiot/camera/pkg/v1/cameras"
+	"github.com/showiot/camera/pkg/v1/feedback"
 	"github.com/showiot/camera/pkg/v1/users"
+	"github.com/showiot/camera/proto/camera_messages_pb"
+	"github.com/showiot/camera/proto/cameras_pb"
+	"github.com/showiot/camera/proto/feedback_pb"
 	"github.com/showiot/camera/proto/users_pb"
 	"github.com/showiot/camera/utils"
 	"google.golang.org/grpc"
@@ -19,9 +26,13 @@ import (
 	"syscall"
 )
 
-const configPath = "configs/config.yaml"
+var configPath = ""
 
+func init()  {
+	flag.StringVar(&configPath, "config_path", "configs/config.yaml", "config path")
+}
 func main() {
+	flag.Parse()
 	if err := config.Init(configPath); err != nil {
 		log.Fatal(err)
 	}
@@ -40,10 +51,12 @@ func main() {
 		signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 		exitChan <- fmt.Errorf("%s", <-signalChan)
 	}()
+
 	go runGrpcServer(exitChan)
 	go gateway.Run(exitChan)
 	err := <-exitChan
 	log.Println(err)
+	logger.GetLogger().WithError(err).Error()
 	exit()
 }
 func exit() {
@@ -52,18 +65,21 @@ func exit() {
 }
 func runGrpcServer(exitChan chan error) {
 	port := config.Conf.GrpcServerConfig.Port
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {
 		exitChan <- err
 	}
-	s := grpc.NewServer(
+	sev := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			utils.UnaryRecover, utils.UnaryValidate,
 		)),
 	)
-	users_pb.RegisterUserServiceServer(s, users.NewUserServiceImpl())
+	users_pb.RegisterUserServiceServer(sev, users.NewUserServiceImpl())
+	feedback_pb.RegisterFeedbackServiceServer(sev, feedback.NewFeedBackImpl())
+	cameras_pb.RegisterCameraServiceServer(sev, cameras.NewCamerasImpl())
+	camera_messages_pb.RegisterCameraMessageServiceServer(sev, camera_messages.NewCameraMessagesImpl())
 	log.Println("Serving gRPC on port:", port)
-	if err := s.Serve(lis); err != nil {
+	if err := sev.Serve(lis); err != nil {
 		exitChan <- err
 	}
 }

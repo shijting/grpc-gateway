@@ -36,88 +36,6 @@ var (
 // define the regex for a UUID once up-front
 var _users_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
-// Validate checks the field values on RegisterRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, an
-// error is returned.
-func (m *RegisterRequest) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	if !_RegisterRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
-		return RegisterRequestValidationError{
-			field:  "PhoneNumber",
-			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
-		}
-	}
-
-	if utf8.RuneCountInString(m.GetCode()) != 6 {
-		return RegisterRequestValidationError{
-			field:  "Code",
-			reason: "value length must be 6 runes",
-		}
-
-	}
-
-	return nil
-}
-
-// RegisterRequestValidationError is the validation error returned by
-// RegisterRequest.Validate if the designated constraints aren't met.
-type RegisterRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RegisterRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RegisterRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RegisterRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RegisterRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RegisterRequestValidationError) ErrorName() string { return "RegisterRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e RegisterRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRegisterRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RegisterRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RegisterRequestValidationError{}
-
-var _RegisterRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
-
 // Validate checks the field values on LoginRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, an error
 // is returned.
@@ -133,9 +51,9 @@ func (m *LoginRequest) Validate() error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetCode()) != 6 {
+	if utf8.RuneCountInString(m.GetCaptcha()) != 6 {
 		return LoginRequestValidationError{
-			field:  "Code",
+			field:  "Captcha",
 			reason: "value length must be 6 runes",
 		}
 
@@ -267,29 +185,27 @@ var _ interface {
 	ErrorName() string
 } = LoginResponseValidationError{}
 
-// Validate checks the field values on GetCodeRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
-func (m *GetCodeRequest) Validate() error {
+// Validate checks the field values on GetCaptchaRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *GetCaptchaRequest) Validate() error {
 	if m == nil {
 		return nil
 	}
 
-	if !_GetCodeRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
-		return GetCodeRequestValidationError{
+	if !_GetCaptchaRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
+		return GetCaptchaRequestValidationError{
 			field:  "PhoneNumber",
 			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
 		}
 	}
 
-	// no validation rules for CodeType
-
 	return nil
 }
 
-// GetCodeRequestValidationError is the validation error returned by
-// GetCodeRequest.Validate if the designated constraints aren't met.
-type GetCodeRequestValidationError struct {
+// GetCaptchaRequestValidationError is the validation error returned by
+// GetCaptchaRequest.Validate if the designated constraints aren't met.
+type GetCaptchaRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -297,22 +213,24 @@ type GetCodeRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetCodeRequestValidationError) Field() string { return e.field }
+func (e GetCaptchaRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetCodeRequestValidationError) Reason() string { return e.reason }
+func (e GetCaptchaRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetCodeRequestValidationError) Cause() error { return e.cause }
+func (e GetCaptchaRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetCodeRequestValidationError) Key() bool { return e.key }
+func (e GetCaptchaRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetCodeRequestValidationError) ErrorName() string { return "GetCodeRequestValidationError" }
+func (e GetCaptchaRequestValidationError) ErrorName() string {
+	return "GetCaptchaRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e GetCodeRequestValidationError) Error() string {
+func (e GetCaptchaRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -324,14 +242,14 @@ func (e GetCodeRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetCodeRequest.%s: %s%s",
+		"invalid %sGetCaptchaRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetCodeRequestValidationError{}
+var _ error = GetCaptchaRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -339,38 +257,39 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetCodeRequestValidationError{}
+} = GetCaptchaRequestValidationError{}
 
-var _GetCodeRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+var _GetCaptchaRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
 
-// Validate checks the field values on UserResponse with the rules defined in
-// the proto definition for this message. If any rules are violated, an error
-// is returned.
-func (m *UserResponse) Validate() error {
+// Validate checks the field values on VerifyCaptchaRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *VerifyCaptchaRequest) Validate() error {
 	if m == nil {
 		return nil
 	}
 
-	// no validation rules for Id
+	if !_VerifyCaptchaRequest_PhoneNumber_Pattern.MatchString(m.GetPhoneNumber()) {
+		return VerifyCaptchaRequestValidationError{
+			field:  "PhoneNumber",
+			reason: "value does not match regex pattern \"^1[3|5|7|8][0-9]{9}$\"",
+		}
+	}
 
-	// no validation rules for PhoneNumber
+	if utf8.RuneCountInString(m.GetCaptcha()) != 6 {
+		return VerifyCaptchaRequestValidationError{
+			field:  "Captcha",
+			reason: "value length must be 6 runes",
+		}
 
-	// no validation rules for LastLoginDate
-
-	// no validation rules for LastLoginIp
-
-	// no validation rules for Status
-
-	// no validation rules for CreatedAt
-
-	// no validation rules for UpdatedTa
+	}
 
 	return nil
 }
 
-// UserResponseValidationError is the validation error returned by
-// UserResponse.Validate if the designated constraints aren't met.
-type UserResponseValidationError struct {
+// VerifyCaptchaRequestValidationError is the validation error returned by
+// VerifyCaptchaRequest.Validate if the designated constraints aren't met.
+type VerifyCaptchaRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -378,22 +297,24 @@ type UserResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserResponseValidationError) Field() string { return e.field }
+func (e VerifyCaptchaRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserResponseValidationError) Reason() string { return e.reason }
+func (e VerifyCaptchaRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserResponseValidationError) Cause() error { return e.cause }
+func (e VerifyCaptchaRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserResponseValidationError) Key() bool { return e.key }
+func (e VerifyCaptchaRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserResponseValidationError) ErrorName() string { return "UserResponseValidationError" }
+func (e VerifyCaptchaRequestValidationError) ErrorName() string {
+	return "VerifyCaptchaRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e UserResponseValidationError) Error() string {
+func (e VerifyCaptchaRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -405,14 +326,14 @@ func (e UserResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserResponse.%s: %s%s",
+		"invalid %sVerifyCaptchaRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserResponseValidationError{}
+var _ error = VerifyCaptchaRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -420,7 +341,78 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserResponseValidationError{}
+} = VerifyCaptchaRequestValidationError{}
+
+var _VerifyCaptchaRequest_PhoneNumber_Pattern = regexp.MustCompile("^1[3|5|7|8][0-9]{9}$")
+
+// Validate checks the field values on VerifyCaptchaResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *VerifyCaptchaResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Verified
+
+	return nil
+}
+
+// VerifyCaptchaResponseValidationError is the validation error returned by
+// VerifyCaptchaResponse.Validate if the designated constraints aren't met.
+type VerifyCaptchaResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VerifyCaptchaResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VerifyCaptchaResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VerifyCaptchaResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VerifyCaptchaResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VerifyCaptchaResponseValidationError) ErrorName() string {
+	return "VerifyCaptchaResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e VerifyCaptchaResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVerifyCaptchaResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VerifyCaptchaResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VerifyCaptchaResponseValidationError{}
 
 // Validate checks the field values on User with the rules defined in the proto
 // definition for this message. If any rules are violated, an error is returned.
@@ -429,11 +421,9 @@ func (m *User) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Id
-
 	// no validation rules for PhoneNumber
 
-	// no validation rules for LastLoginDate
+	// no validation rules for LastLoginAt
 
 	// no validation rules for LastLoginIp
 
@@ -441,7 +431,11 @@ func (m *User) Validate() error {
 
 	// no validation rules for CreatedAt
 
-	// no validation rules for UpdatedTa
+	// no validation rules for UpdatedAt
+
+	// no validation rules for Avatar
+
+	// no validation rules for Nickname
 
 	return nil
 }
@@ -499,3 +493,279 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserValidationError{}
+
+// Validate checks the field values on UpdateUserInfoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *UpdateUserInfoRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Nickname
+
+	return nil
+}
+
+// UpdateUserInfoRequestValidationError is the validation error returned by
+// UpdateUserInfoRequest.Validate if the designated constraints aren't met.
+type UpdateUserInfoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserInfoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserInfoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserInfoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserInfoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserInfoRequestValidationError) ErrorName() string {
+	return "UpdateUserInfoRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserInfoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserInfoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserInfoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserInfoRequestValidationError{}
+
+// Validate checks the field values on UpdateUserInfoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *UpdateUserInfoResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Nickname
+
+	return nil
+}
+
+// UpdateUserInfoResponseValidationError is the validation error returned by
+// UpdateUserInfoResponse.Validate if the designated constraints aren't met.
+type UpdateUserInfoResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUserInfoResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUserInfoResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUserInfoResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUserInfoResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUserInfoResponseValidationError) ErrorName() string {
+	return "UpdateUserInfoResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUserInfoResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUserInfoResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUserInfoResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUserInfoResponseValidationError{}
+
+// Validate checks the field values on UploadAvatarRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *UploadAvatarRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Avatar
+
+	return nil
+}
+
+// UploadAvatarRequestValidationError is the validation error returned by
+// UploadAvatarRequest.Validate if the designated constraints aren't met.
+type UploadAvatarRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UploadAvatarRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UploadAvatarRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UploadAvatarRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UploadAvatarRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UploadAvatarRequestValidationError) ErrorName() string {
+	return "UploadAvatarRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UploadAvatarRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUploadAvatarRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UploadAvatarRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UploadAvatarRequestValidationError{}
+
+// Validate checks the field values on UploadAvatarResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *UploadAvatarResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for ImageUrl
+
+	return nil
+}
+
+// UploadAvatarResponseValidationError is the validation error returned by
+// UploadAvatarResponse.Validate if the designated constraints aren't met.
+type UploadAvatarResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UploadAvatarResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UploadAvatarResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UploadAvatarResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UploadAvatarResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UploadAvatarResponseValidationError) ErrorName() string {
+	return "UploadAvatarResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UploadAvatarResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUploadAvatarResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UploadAvatarResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UploadAvatarResponseValidationError{}

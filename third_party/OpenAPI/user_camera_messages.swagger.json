@@ -1,0 +1,126 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_camera_messages.proto",
+    "version": "v1"
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/user_camera_message/{id}": {
+      "post": {
+        "summary": "单条消息设置为已读",
+        "description": "单条消息设置为已读",
+        "operationId": "UserCameraMessageService_SetHaveReadUserCameraMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user_camera_messages_pbSetMessageHaveReadResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserCameraMessages"
+        ]
+      }
+    },
+    "/v1/user_camera_messages/{cameraId}": {
+      "post": {
+        "summary": "设备消息设置为已读",
+        "description": "设备消息设置为已读",
+        "operationId": "UserCameraMessageService_SetHaveReadUserCameraMessages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user_camera_messages_pbSetMessagesHaveReadResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cameraId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserCameraMessages"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "user_camera_messages_pbSetMessageHaveReadResponse": {
+      "type": "object"
+    },
+    "user_camera_messages_pbSetMessagesHaveReadResponse": {
+      "type": "object"
+    }
+  },
+  "externalDocs": {
+    "description": "Camera System Open API",
+    "url": "http://localhost:8001/"
+  }
+}

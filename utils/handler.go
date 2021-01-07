@@ -12,7 +12,7 @@ import (
 func UnaryRecover(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (res interface{}, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.GetLogger().WithField("type", "system").Error(r)
+			logger.GetLogger().WithField("type", "panic").Error(r)
 			//err = status.Error(codes.Internal, "系统错误，请稍后重试")
 			err = proto.Errorg(codes.Internal, proto.Error_ERR_INTERNAL_SERVER)
 		}

@@ -18,5 +18,6 @@ gen-proto:
 		--openapiv2_out=third_party/OpenAPI/ \
 		proto/users.proto
 
+
 statik:
 	statik -m -f -src third_party/OpenAPI/

@@ -31,30 +31,49 @@
   </head>
 
   <body>
+    <div style="background-color: #1f1f1f">
+      <select id="api-select"></select>
+    </div>
     <div id="swagger-ui"></div>
-
     <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
-    window.onload = function() {
-      // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
-        url: "./users.swagger.json",
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout"
-      })
-      // End Swagger UI call region
-
-      window.ui = ui
-    }
+      let sites = [
+        {name: '用户', url: './users.swagger.json'},
+        {name: '反馈', url: './feedback.swagger.json'},
+        {name: '设备', url: './cameras.swagger.json'},
+        {name: '设备消息', url: './camera_messages.swagger.json'}
+      ]
+      window.onload = function() {
+        let selectUrl = function(url) {
+          let ui = SwaggerUIBundle({
+            url: url,
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+              SwaggerUIBundle.presets.apis,
+              SwaggerUIStandalonePreset
+            ],
+            plugins: [
+              SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "StandaloneLayout"
+          });
+          window.ui = ui
+        }
+        selectUrl(sites[0].url)
+        let items = document.getElementById('api-select');
+        sites.forEach(site => {
+          let option = document.createElement('option')
+          option.innerHTML = site.name
+          option.value = site.url
+          items.appendChild(option)
+        });
+        items.onchange = function() {
+          let valOption = this.options[this.selectedIndex].value
+          selectUrl(valOption)
+        }
+      }
   </script>
   </body>
 </html>
